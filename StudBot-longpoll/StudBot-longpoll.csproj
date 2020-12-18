@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>StudBot_longpoll</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="VkNet" Version="1.56.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="TimetableGetter">
+      <HintPath>..\..\GetShedule\SheduleGetter\bin\Debug\netcoreapp2.2\TimetableGetter.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
