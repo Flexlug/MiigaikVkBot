@@ -20,7 +20,7 @@ namespace StudBot.Responsers
         /// <summary>
         /// Ссылка на страницу с расписанием
         /// </summary>
-        public readonly string GIDZ_IPD_SHEDULE_URL = "http://studydep.miigaik.ru/index.php?fak=ФПКиФ&kurs=3&grup=ГиДЗипд+III-1б";
+        public readonly string GIDZ_IPD_SHEDULE_URL = "http://studydep.miigaik.ru/index.php?fak=ГФ&kurs=4&grup=ГиДЗипд+IV-1б";
 
         /// <summary>
         /// Расписание группы
