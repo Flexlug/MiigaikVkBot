@@ -1,5 +1,6 @@
 ﻿using StudBot.Converters;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,7 +61,7 @@ namespace StudBot.Utils
         /// </summary>
         /// <param name="shedule">Расписание</param>
         /// <returns></returns>
-        public static string GetSubject(Shedule shedule)
+        public static string GetSubject(Shedule shedule, ConcurrentDictionary<string, string> urls = null)
         {
             //Tuple<int, string> currSubj = GetCurrentSubjectNum(DateTime.Now.TimeOfDay);
             Tuple<int, string> currSubj = GetCurrentSubjectNum(DateTime.Now.TimeOfDay);
@@ -112,7 +113,10 @@ namespace StudBot.Utils
             if (subject == null)
                 return "Пар сегодня больше нет. Совсем нет.";
 
-            return $"{currSubj.Item2}\n{SheduleFormat.PrintSubject(subject)}";
+            string url = string.Empty;
+            urls.TryGetValue(subject.SubjectName.ToLower(), out url);
+
+            return $"{currSubj.Item2}\n{SheduleFormat.PrintSubject(subject, url)}";
         }
     }
 }

@@ -8,7 +8,7 @@ namespace StudBot.Utils
 {
     public static class VersionInfo
     {
-        public static string Ver = "0.92";
-        public static string LastUpdates = $"\n{Emoji.LetterI()} Добавлено отображение времени начала пары.\n{Emoji.LetterI()} Добавлена возможность просмотреть, какая пара идёт прямо сейчас.\n";
+        public static string Ver = "0.94";
+        public static string LastUpdates = $"\n{Emoji.LetterI()} Бот снова показывает ссылки на пары.\n";
     }
 }

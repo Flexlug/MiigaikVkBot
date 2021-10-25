@@ -12,6 +12,8 @@ using VkNet;
 using VkNet.Model;
 using VkNet.Model.Keyboard;
 using VkNet.Model.RequestParams;
+using System.IO;
+using System.Collections.Concurrent;
 
 namespace StudBot.Responsers
 {
@@ -28,9 +30,19 @@ namespace StudBot.Responsers
         public Shedule IpdShedule;
 
         /// <summary>
+        /// Дата последнего обновления
+        /// </summary>
+        private DateTime LastUpdateTime;
+
+        /// <summary>
         /// Конструктор клавиатуры
         /// </summary>
         public KeyboardBuilder keyboardBuilder = new KeyboardBuilder(false);
+
+        /// <summary>
+        /// Словарь с ссылками на пары
+        /// </summary>
+        public ConcurrentDictionary<string, string> URLs = new ConcurrentDictionary<string, string>();
 
         public ResponserIPD(long _groupId, VkApi _vkApi, bool reverseWeek) : base(_groupId, _vkApi)
         {
@@ -52,20 +64,94 @@ namespace StudBot.Responsers
             keyboardBuilder.AddButton("Четверг", "", VkNet.Enums.SafetyEnums.KeyboardButtonColor.Default);
             keyboardBuilder.AddButton("Пятница", "", VkNet.Enums.SafetyEnums.KeyboardButtonColor.Default);
             keyboardBuilder.AddButton("Суббота", "", VkNet.Enums.SafetyEnums.KeyboardButtonColor.Default);
-            keyboardBuilder.AddLine();
 
+            if (File.Exists("urls.json"))
+            {
+                try
+                {
+                    URLs = Newtonsoft.Json.JsonConvert.DeserializeObject(File.ReadAllText("urls.json")) as ConcurrentDictionary<string, string> ?? new();
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("Не удалось считать файл с ссылками");
+                }
+            }
+            else
+                File.Create("urls.json");
         }
 
         public override MessagesSendParams ConstructResponse(Message message)
         {
+            if (DateTime.Now - LastUpdateTime > TimeSpan.FromHours(1))
+                IpdShedule.UpdateTimetable();
+
             string response = "";
             string msg = message.Body.ToLower();
+
+            if (msg.StartsWith("ссылка"))
+            {
+                var strings = msg.Split('\n').Select(x => x).Where(x => !string.IsNullOrEmpty(x)).ToList();
+                if (strings.Count == 3)
+                {
+                    string newValue = strings[2].Trim();
+
+                    URLs.AddOrUpdate(strings[1], strings[2], (key, value) => strings[2]);
+
+                    File.WriteAllText("urls.json", Newtonsoft.Json.JsonConvert.SerializeObject(URLs));
+                    return new MessagesSendParams()
+                    {
+                        Message = "Успешно",
+                        RandomId = new DateTime().Millisecond,
+                        UserId = message.UserId,
+                        Keyboard = keyboardBuilder.Build()
+                    };
+                }
+                else
+                {
+                    return new MessagesSendParams()
+                    {
+                        Message = "Неверный формат",
+                        RandomId = new DateTime().Millisecond,
+                        UserId = message.UserId,
+                        Keyboard = keyboardBuilder.Build()
+                    };
+                }
+            }
+
+            if (msg.StartsWith("удалить ссылку"))
+            {
+                var strings = msg.Split('\n').Select(x => x).Where(x => !string.IsNullOrEmpty(x)).ToList();
+                if (strings.Count == 2)
+                {
+                    string value = string.Empty;
+                    if (URLs.TryGetValue(strings[1], out value))
+                        URLs.Remove(strings[1], out _);
+
+                    return new MessagesSendParams()
+                    {
+                        Message = "Успешно",
+                        RandomId = new DateTime().Millisecond,
+                        UserId = message.UserId,
+                        Keyboard = keyboardBuilder.Build()
+                    };
+                }
+                else
+                {
+                    return new MessagesSendParams()
+                    {
+                        Message = "Неверный формат",
+                        RandomId = new DateTime().Millisecond,
+                        UserId = message.UserId,
+                        Keyboard = keyboardBuilder.Build()
+                    };
+                }
+            }
 
             switch (msg)
             {
                 case "сегодня":
                     if (DateTime.Now.DayOfWeek != DayOfWeek.Sunday)
-                            response = Converters.SheduleFormat.GetSheduleOn(DateTime.Now, IpdShedule, false);
+                        response = Converters.SheduleFormat.GetSheduleOn(DateTime.Now, IpdShedule, false, URLs);
                     else
                         return new MessagesSendParams()
                         {
@@ -77,7 +163,7 @@ namespace StudBot.Responsers
                     break;
                 case "завтра":
                     if (DateTime.Now.DayOfWeek != DayOfWeek.Saturday)
-                            response = Converters.SheduleFormat.GetSheduleOn(DateTime.Now.AddDays(1), IpdShedule, false);
+                            response = Converters.SheduleFormat.GetSheduleOn(DateTime.Now.AddDays(1), IpdShedule, false, URLs);
                     else
                         return new MessagesSendParams()
                         {
@@ -96,7 +182,7 @@ namespace StudBot.Responsers
                     DayOfWeek day = Converters.DayOfWeekConverter.FromStrToDOW(message.Body);
                     // на неделю вперёд
                     //response = Converters.SheduleFormat.GetSheduleOn((new DateTime(2019, 9, 2)).AddDays(day == DayOfWeek.Sunday ? 6 : (int)day - 1), IpdShedule, true);
-                    response = Converters.SheduleFormat.GetSheduleOn((new DateTime(2019, 9, 2)).AddDays(day == DayOfWeek.Sunday ? 6 : (int)day - 1), IpdShedule, true);
+                    response = Converters.SheduleFormat.GetSheduleOn((new DateTime(2019, 9, 2)).AddDays(day == DayOfWeek.Sunday ? 6 : (int)day - 1), IpdShedule, true, URLs);
                     //response = Converters.SheduleFormat.GetSheduleOn(DateTime.Now, IpdShedule, true);
                     break;
                 case "воскресенье":
@@ -107,6 +193,7 @@ namespace StudBot.Responsers
                         UserId = message.UserId,
                         Keyboard = keyboardBuilder.Build()
                     };
+                case "начать":
                 case "помощь":
                     return new MessagesSendParams()
                     {
@@ -115,7 +202,7 @@ namespace StudBot.Responsers
                         UserId = message.UserId,
                         Keyboard = keyboardBuilder.Build()
                     };
-                case "force_update_00":
+                case "обновить расписание":
                     IpdShedule.UpdateTimetable();
                     return new MessagesSendParams()
                     {
@@ -135,7 +222,7 @@ namespace StudBot.Responsers
                 case "сейчас":
                     return new MessagesSendParams()
                     {
-                        Message = CurrentSubjectGetter.GetSubject(IpdShedule),
+                        Message = CurrentSubjectGetter.GetSubject(IpdShedule, URLs),
                         RandomId = new DateTime().Millisecond,
                         UserId = message.UserId,
                         Keyboard = keyboardBuilder.Build()

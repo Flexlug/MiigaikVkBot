@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TimetableGetter;
 
 using StudBot.Converters;
+using System.Collections.Concurrent;
 
 namespace StudBot.Converters
 {
@@ -34,7 +35,7 @@ namespace StudBot.Converters
         /// <param name="shedule">Само расписание</param>
         /// <param name="bothWeeeks">Расписание на обе недели (верхней и нижней) или только на текущей</param>
         /// <returns></returns>
-        public static string GetSheduleOn(DateTime day, Shedule shedule, bool bothWeeks)
+        public static string GetSheduleOn(DateTime day, Shedule shedule, bool bothWeeks, ConcurrentDictionary<string, string> urls = null)
         {
             StringBuilder lower = new StringBuilder();
             StringBuilder upper = new StringBuilder();
@@ -81,13 +82,30 @@ namespace StudBot.Converters
                     break;
             }
 
-            foreach (Subject subj in loadingDay.Timetable)
-                if (subj.WeekType == WeekType.Lower)
-                    lower.AppendLine($"{Emoji.Number(subj.SubjectNumber)}: [{LessonsStartTime[subj.SubjectNumber]}] {(subj.GroupNumber != 0 ? $"(группа {subj.GroupNumber})" : "")} {subj.SubjectName.ToUpper()} {subj.SubjectType}\n{subj.EducatorName} ({subj.Auditory}){(subj.Comment == string.Empty ? "" : $"\n{Emoji.RedCircle()}{subj.Comment}{Emoji.RedCircle()}")}");
-                    //lower.AppendLine($"{Emoji.Number(subj.SubjectNumber)}: {(subj.GroupNumber != 0 ? $"(группа {subj.GroupNumber})" : "")} {subj.SubjectName.ToUpper()} ({subj.Auditory}) {subj.SubjectType}\n{subj.EducatorName}{(subj.Comment == string.Empty ? "" : $"\n{Emoji.RedCircle()}{subj.Comment}{Emoji.RedCircle()}")}");
-                else
-                    upper.AppendLine($"{Emoji.Number(subj.SubjectNumber)}: [{LessonsStartTime[subj.SubjectNumber]}] {(subj.GroupNumber != 0 ? $"(группа {subj.GroupNumber})" : "")} {subj.SubjectName.ToUpper()} {subj.SubjectType}\n{subj.EducatorName} ({subj.Auditory}){(subj.Comment == string.Empty ? "" : $"\n{Emoji.RedCircle()}{subj.Comment}{Emoji.RedCircle()}")}");
-                    //upper.AppendLine($"{Emoji.Number(subj.SubjectNumber)}: {(subj.GroupNumber != 0 ? $"(группа {subj.GroupNumber})" : "")} {subj.SubjectName.ToUpper()} ({subj.Auditory}) {subj.SubjectType}\n{subj.EducatorName}{(subj.Comment == string.Empty ? "" : $"\n{Emoji.RedCircle()}{subj.Comment}{Emoji.RedCircle()}")}");
+            if (urls is null)
+            { 
+                foreach (Subject subj in loadingDay.Timetable)
+                    if (subj.WeekType == WeekType.Lower)
+                        lower.AppendLine($"{Emoji.Number(subj.SubjectNumber)}: [{LessonsStartTime[subj.SubjectNumber]}] {(subj.GroupNumber != 0 ? $"(группа {subj.GroupNumber})" : "")} {subj.SubjectName.ToUpper()} {subj.SubjectType}\n{subj.EducatorName} ({subj.Auditory}){(subj.Comment == string.Empty ? "" : $"\n{Emoji.RedCircle()}{subj.Comment}{Emoji.RedCircle()}")}");
+                        //lower.AppendLine($"{Emoji.Number(subj.SubjectNumber)}: {(subj.GroupNumber != 0 ? $"(группа {subj.GroupNumber})" : "")} {subj.SubjectName.ToUpper()} ({subj.Auditory}) {subj.SubjectType}\n{subj.EducatorName}{(subj.Comment == string.Empty ? "" : $"\n{Emoji.RedCircle()}{subj.Comment}{Emoji.RedCircle()}")}");
+                    else
+                        upper.AppendLine($"{Emoji.Number(subj.SubjectNumber)}: [{LessonsStartTime[subj.SubjectNumber]}] {(subj.GroupNumber != 0 ? $"(группа {subj.GroupNumber})" : "")} {subj.SubjectName.ToUpper()} {subj.SubjectType}\n{subj.EducatorName} ({subj.Auditory}){(subj.Comment == string.Empty ? "" : $"\n{Emoji.RedCircle()}{subj.Comment}{Emoji.RedCircle()}")}");
+                        //upper.AppendLine($"{Emoji.Number(subj.SubjectNumber)}: {(subj.GroupNumber != 0 ? $"(группа {subj.GroupNumber})" : "")} {subj.SubjectName.ToUpper()} ({subj.Auditory}) {subj.SubjectType}\n{subj.EducatorName}{(subj.Comment == string.Empty ? "" : $"\n{Emoji.RedCircle()}{subj.Comment}{Emoji.RedCircle()}")}");
+            }
+            else
+            {
+                foreach (Subject subj in loadingDay.Timetable)
+                {
+                    string url = string.Empty;
+                    urls.TryGetValue(subj.SubjectName.ToLower(), out url);
+
+                    if (subj.WeekType == WeekType.Lower)
+                        lower.AppendLine($"{Emoji.Number(subj.SubjectNumber)}: [{LessonsStartTime[subj.SubjectNumber]}] {(subj.GroupNumber != 0 ? $"(группа {subj.GroupNumber})" : "")} {subj.SubjectName.ToUpper()} {subj.SubjectType}\n{subj.EducatorName} ({subj.Auditory}){(string.IsNullOrEmpty(url) ? "" : $"\n{Emoji.RedCircle()}{url}{Emoji.RedCircle()}")}");
+                    else
+                        upper.AppendLine($"{Emoji.Number(subj.SubjectNumber)}: [{LessonsStartTime[subj.SubjectNumber]}] {(subj.GroupNumber != 0 ? $"(группа {subj.GroupNumber})" : "")} {subj.SubjectName.ToUpper()} {subj.SubjectType}\n{subj.EducatorName} ({subj.Auditory}){(string.IsNullOrEmpty(url) ? "" : $"\n{Emoji.RedCircle()}{url}{Emoji.RedCircle()}")}");
+                }
+            }
+
 
             if (!bothWeeks)
             {
@@ -117,9 +135,9 @@ namespace StudBot.Converters
         /// </summary>
         /// <param name="subj">Рассматриваемая пара</param>
         /// <returns></returns>
-        public static string PrintSubject(Subject subj)
+        public static string PrintSubject(Subject subj, string url)
         {
-            return $"{Emoji.Number(subj.SubjectNumber)}: [{LessonsStartTime[subj.SubjectNumber]}] {(subj.GroupNumber != 0 ? $"(группа {subj.GroupNumber})" : "")} {subj.SubjectName.ToUpper()} {subj.SubjectType}\n{subj.EducatorName} ({subj.Auditory}){(subj.Comment == string.Empty ? "" : $"\n{Emoji.RedCircle()}{subj.Comment}{Emoji.RedCircle()}")}";
+            return $"{Emoji.Number(subj.SubjectNumber)}: [{LessonsStartTime[subj.SubjectNumber]}] {(subj.GroupNumber != 0 ? $"(группа {subj.GroupNumber})" : "")} {subj.SubjectName.ToUpper()} {subj.SubjectType}\n{subj.EducatorName} ({subj.Auditory}){(string.IsNullOrEmpty(url) ? "" : $"\n{Emoji.RedCircle()}{url}{Emoji.RedCircle()}")}";
         }
 
         /// <summary>
