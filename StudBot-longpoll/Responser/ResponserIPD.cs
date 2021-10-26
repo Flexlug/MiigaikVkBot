@@ -69,7 +69,7 @@ namespace StudBot.Responsers
             {
                 try
                 {
-                    URLs = Newtonsoft.Json.JsonConvert.DeserializeObject(File.ReadAllText("urls.json")) as ConcurrentDictionary<string, string> ?? new();
+                    URLs = Newtonsoft.Json.JsonConvert.DeserializeObject<ConcurrentDictionary<string, string>>(File.ReadAllText("urls.json")) ?? new();
                 }
                 catch(Exception ex)
                 {
