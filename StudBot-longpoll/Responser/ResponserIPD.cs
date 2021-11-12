@@ -90,12 +90,13 @@ namespace StudBot.Responsers
 
             if (msg.StartsWith("ссылка"))
             {
+                msg = message.Body;
                 var strings = msg.Split('\n').Select(x => x).Where(x => !string.IsNullOrEmpty(x)).ToList();
                 if (strings.Count == 3)
                 {
                     string newValue = strings[2].Trim();
 
-                    URLs.AddOrUpdate(strings[1], strings[2], (key, value) => strings[2]);
+                    URLs.AddOrUpdate(strings[1].ToLower(), strings[2], (key, value) => strings[2]);
 
                     File.WriteAllText("urls.json", Newtonsoft.Json.JsonConvert.SerializeObject(URLs));
                     return new MessagesSendParams()
