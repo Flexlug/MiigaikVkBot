@@ -88,6 +88,34 @@ namespace StudBot.Responsers
             string response = "";
             string msg = message.Body.ToLower();
 
+            if (msg.Contains("|||"))
+            {
+                return null;
+            }
+
+            if (msg.Contains("снилс"))
+            {
+                return new MessagesSendParams()
+                {
+                    Message = "OK",
+                    RandomId = new DateTime().Millisecond,
+                    UserId = message.UserId,
+                    Keyboard = keyboardBuilder.Build()
+                };
+            }
+
+
+            if (msg.StartsWith("тема:"))
+            {
+                return new MessagesSendParams()
+                {
+                    Message = "OK",
+                    RandomId = new DateTime().Millisecond,
+                    UserId = message.UserId,
+                    Keyboard = keyboardBuilder.Build()
+                };
+            }    
+
             if (msg.StartsWith("ссылка"))
             {
                 msg = message.Body;

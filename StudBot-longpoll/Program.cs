@@ -53,8 +53,14 @@ namespace StudBot
                     continue;
 
                 foreach (var update in poll.Updates)
+                {
                     if (update.Type == GroupUpdateType.MessageNew)
-                        api.Messages.Send(responser.ConstructResponse(update.Message));
+                    {
+                        var answer = responser.ConstructResponse(update.Message);
+                        if (answer is not null)
+                            api.Messages.Send(responser.ConstructResponse(update.Message));
+                    }
+                }
             }
         }
     }
