@@ -97,7 +97,12 @@ namespace StudBot.Converters
                 foreach (Subject subj in loadingDay.Timetable)
                 {
                     string url = string.Empty;
-                    urls.TryGetValue(subj.SubjectName.ToLower(), out url);
+                    
+                    string subjName = subj.SubjectName.ToLower();
+                    // Remove multiple spaces
+                    subjName = string.Join( " ", subjName.Split( new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries ));
+                    
+                    urls.TryGetValue(subjName, out url);
 
                     if (subj.WeekType == WeekType.Lower)
                         lower.AppendLine($"{Emoji.Number(subj.SubjectNumber)}: [{LessonsStartTime[subj.SubjectNumber]}] {(subj.GroupNumber != 0 ? $"(группа {subj.GroupNumber})" : "")} {subj.SubjectName.ToUpper()} {subj.SubjectType}\n{subj.EducatorName} ({subj.Auditory}){(string.IsNullOrEmpty(url) ? "" : $"\n{Emoji.RedCircle()}{url}{Emoji.RedCircle()}")}");

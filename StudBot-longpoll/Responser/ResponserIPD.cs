@@ -122,9 +122,10 @@ namespace StudBot.Responsers
                 var strings = msg.Split('\n').Select(x => x).Where(x => !string.IsNullOrEmpty(x)).ToList();
                 if (strings.Count == 3)
                 {
-                    string newValue = strings[2].Trim();
+                    string subjName = strings[1].ToLower();
+                    subjName = string.Join( " ", subjName.Split( new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries ));
 
-                    URLs.AddOrUpdate(strings[1].ToLower(), strings[2], (key, value) => strings[2]);
+                    URLs.AddOrUpdate(subjName, strings[2], (key, value) => strings[2]);
 
                     File.WriteAllText("urls.json", Newtonsoft.Json.JsonConvert.SerializeObject(URLs));
                     return new MessagesSendParams()
@@ -153,8 +154,12 @@ namespace StudBot.Responsers
                 if (strings.Count == 2)
                 {
                     string value = string.Empty;
-                    if (URLs.TryGetValue(strings[1], out value))
-                        URLs.Remove(strings[1], out _);
+                    
+                    string subjName = strings[1].ToLower();
+                    subjName = string.Join( " ", subjName.Split( new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries ));
+                    
+                    if (URLs.TryGetValue(subjName, out value))
+                        URLs.Remove(subjName, out _);
 
                     return new MessagesSendParams()
                     {
