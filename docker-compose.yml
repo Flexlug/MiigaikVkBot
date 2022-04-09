@@ -2,7 +2,7 @@
 version: '3.8'
 
 services:
-  skeletron:
+  miigaikvkbot:
     image: flexlug/miigaikvkbot:latest
     restart: unless-stopped
     volumes:
