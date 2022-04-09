@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>MiigaikVkBot</RootNamespace>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
@@ -14,9 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="TimetableGetter">
-      <HintPath>..\..\GetShedule\SheduleGetter\bin\Debug\net5.0\TimetableGetter.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\MiigaikVkBot.Timetable\MiigaikVkBot.Timetable.csproj" />
   </ItemGroup>
 
 </Project>
