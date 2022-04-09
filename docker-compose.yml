@@ -1,0 +1,9 @@
+
+version: '3.8'
+
+services:
+  skeletron:
+    image: flexlug/studbotlongpoll:latest
+    restart: unless-stopped
+    volumes:
+      - /var/docker_data/studbotlongpoll-config:/app/data

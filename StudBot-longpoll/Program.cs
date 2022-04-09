@@ -8,6 +8,7 @@ using VkNet.Model;
 using VkNet.Model.RequestParams;
 using VkNet.Enums.SafetyEnums;
 using VkNet.Enums.Filters;
+using System.IO;
 
 namespace StudBot
 {
@@ -21,7 +22,9 @@ namespace StudBot
             Console.WriteLine($"StudBot v.{VersionInfo.Ver}");
 
             responser = new ResponserIPD(185277791, api, true);
-            
+
+            string token = File.ReadAllText("data/token.txt");
+
             ApiAuthParams authParams = new ApiAuthParams()
             {
                 AccessToken = "a0ae25b183f4fedca6fcae08d8dd56b298837e11135133a613804d5fe53001329a97988c0af30f9c6ea1d"

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "StudBot-longpoll": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
