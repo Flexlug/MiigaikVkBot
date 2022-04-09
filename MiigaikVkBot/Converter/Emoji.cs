@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace StudBot.Converters
+namespace MiigaikVkBot.Converters
 {
     public static class Emoji
     {

@@ -7,7 +7,7 @@ using VkNet;
 using VkNet.Model;
 using VkNet.Model.RequestParams;
 
-namespace StudBot.Responsers
+namespace MiigaikVkBot.Responsers
 {
     public class Responser
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 
-using StudBot.Responsers;
-using StudBot.Utils;
+using MiigaikVkBot.Responsers;
+using MiigaikVkBot.Utils;
 
 using VkNet;
 using VkNet.Model;
@@ -10,7 +10,7 @@ using VkNet.Enums.SafetyEnums;
 using VkNet.Enums.Filters;
 using System.IO;
 
-namespace StudBot
+namespace MiigaikVkBot
 {
     class Program
     {

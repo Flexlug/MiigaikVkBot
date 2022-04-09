@@ -3,7 +3,7 @@ version: '3.8'
 
 services:
   skeletron:
-    image: flexlug/studbotlongpoll:latest
+    image: flexlug/miigaikvkbot:latest
     restart: unless-stopped
     volumes:
-      - /var/docker_data/studbotlongpoll-config:/app/data
+      - /var/docker_data/miigaikvkbot-config:/app/data

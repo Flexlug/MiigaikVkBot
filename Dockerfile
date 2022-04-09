@@ -5,16 +5,16 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["StudBot-longpoll/StudBot-longpoll.csproj", "StudBot-longpoll/"]
-RUN dotnet restore "StudBot-longpoll/StudBot-longpoll.csproj"
+COPY ["MiigaikVkBot/MiigaikVkBot.csproj", "MiigaikVkBot/"]
+RUN dotnet restore "MiigaikVkBot/MiigaikVkBot.csproj"
 COPY . .
-WORKDIR "/src/StudBot-longpoll"
-RUN dotnet build "StudBot-longpoll.csproj" -c Release -o /app/build
+WORKDIR "/src/MiigaikVkBot"
+RUN dotnet build "MiigaikVkBot.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "StudBot-longpoll.csproj" -c Release -o /app/publish
+RUN dotnet publish "MiigaikVkBot.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "StudBot-longpoll.dll"]
+ENTRYPOINT ["dotnet", "MiigaikVkBot.dll"]

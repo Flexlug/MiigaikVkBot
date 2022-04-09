@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 using TimetableGetter;
 
-using StudBot.Converters;
-using StudBot.Utils;
+using MiigaikVkBot.Converters;
+using MiigaikVkBot.Utils;
 
 using VkNet;
 using VkNet.Model;
@@ -15,7 +15,7 @@ using VkNet.Model.RequestParams;
 using System.IO;
 using System.Collections.Concurrent;
 
-namespace StudBot.Responsers
+namespace MiigaikVkBot.Responsers
 {
     public class ResponserIPD : Responser
     {
@@ -231,7 +231,7 @@ namespace StudBot.Responsers
                 case "помощь":
                     return new MessagesSendParams()
                     {
-                        Message = $"{Emoji.RedCircle()} SheduleBOT ALPHA v{VersionInfo.Ver} {Emoji.RedCircle()}\n\nПоследние изменения:\n{VersionInfo.LastUpdates}\nЭтот бот находится на стадии alpha-тестирования и может работать нестабильно. Обо всех найденных ошибках сообщать: http://vk.com/flexlug \n Для того, чтобы увидеть расписание, введите соответствующий день недели.\nТакже можно вывести расписание на сегодняшний или завтрашний день. Вводите \"сегодня\" или \"завтра\" соответственно.",
+                        Message = $"{Emoji.RedCircle()} SheduleBOT v{VersionInfo.Ver} {Emoji.RedCircle()}\n\nПоследние изменения:\n{VersionInfo.LastUpdates}\nОбо всех найденных ошибках сообщать: http://vk.com/flexlug \n Для того, чтобы увидеть расписание, введите соответствующий день недели.\nТакже можно вывести расписание на сегодняшний или завтрашний день. Вводите \"сегодня\" или \"завтра\" соответственно.",
                         RandomId = new DateTime().Millisecond,
                         UserId = message.UserId,
                         Keyboard = keyboardBuilder.Build()

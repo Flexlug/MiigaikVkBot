@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 using TimetableGetter;
 
-using StudBot.Converters;
+using MiigaikVkBot.Converters;
 using System.Collections.Concurrent;
 
-namespace StudBot.Converters
+namespace MiigaikVkBot.Converters
 {
     public static class SheduleFormat
     {

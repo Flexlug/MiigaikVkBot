@@ -1,4 +1,4 @@
-﻿using StudBot.Converters;
+﻿using MiigaikVkBot.Converters;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Text;
 
 using TimetableGetter;
 
-namespace StudBot.Utils
+namespace MiigaikVkBot.Utils
 {
     /// <summary>
     /// Получает предмет, который будет или уже должен идти сейчас

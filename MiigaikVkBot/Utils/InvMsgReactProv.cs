@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace StudBot.Utils
+namespace MiigaikVkBot.Utils
 {
     /// <summary>
     /// Генерация реакций на невалидные команды для бота
