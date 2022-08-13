@@ -22,7 +22,7 @@ namespace MiigaikVkBot.Responsers
         /// <summary>
         /// Ссылка на страницу с расписанием
         /// </summary>
-        public readonly string GIDZ_IPD_SHEDULE_URL = "http://studydep.miigaik.ru/index.php?fak=ГФ&kurs=4&grup=ГиДЗипд+IV-1б";
+        public readonly string GIDZ_IPD_SHEDULE_URL = "http://studydep.miigaik.ru/index.php?fak=ФГиИБ&kurs=1&grup=ИСиТибикс+I-1м";
 
         /// <summary>
         /// Расписание группы
