@@ -38,7 +38,7 @@ namespace MiigaikVkBot.Utils
                 new TimeSpan(21, 00, 0), //false 13
                 new TimeSpan(21, 10, 0), //true  14
                 new TimeSpan(22, 40, 0), //false 15
-                new TimeSpan(23, 59, 59)    //true  16
+                new TimeSpan(23, 59, 59) //true  16
             };
 
             for (int i = timeSpans.Length - 1; i > 0; i--)
