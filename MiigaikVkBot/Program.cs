@@ -21,13 +21,13 @@ namespace MiigaikVkBot
         {
             Console.WriteLine($"StudBot v.{VersionInfo.Ver}");
 
-            responser = new ResponserIPD(185277791, api, true);
+            responser = new ResponserIPD(215791351, api, true);
 
             string token = File.ReadAllText("data/token.txt");
 
             ApiAuthParams authParams = new ApiAuthParams()
             {
-                AccessToken = "a0ae25b183f4fedca6fcae08d8dd56b298837e11135133a613804d5fe53001329a97988c0af30f9c6ea1d"
+                AccessToken = token
             };
             api.Authorize(authParams);
 
@@ -43,7 +43,7 @@ namespace MiigaikVkBot
 
             while (true)
             {
-                var s = api.Groups.GetLongPollServer(185277791);
+                var s = api.Groups.GetLongPollServer(215791351);
 
                 var poll = api.Groups.GetBotsLongPollHistory(new BotsLongPollHistoryParams()
                                                              { 
