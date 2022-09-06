@@ -63,11 +63,11 @@ namespace MiigaikVkBot.Utils
         /// <returns></returns>
         public static string GetSubject(Shedule shedule, ConcurrentDictionary<string, string> urls = null)
         {
-            //Tuple<int, string> currSubj = GetCurrentSubjectNum(DateTime.Now.TimeOfDay);
-            Tuple<int, string> currSubj = GetCurrentSubjectNum(DateTime.Now.TimeOfDay);
+            //Tuple<int, string> currSubj = GetCurrentSubjectNum(DateTimeProvider.Now.TimeOfDay);
+            Tuple<int, string> currSubj = GetCurrentSubjectNum(DateTimeProvider.Now.TimeOfDay);
             Day loadingDay = null;
 
-            switch (DateTime.Now.DayOfWeek)
+            switch (DateTimeProvider.Now.DayOfWeek)
             {
                 case DayOfWeek.Monday:
                     loadingDay = shedule.Monday;
@@ -97,7 +97,7 @@ namespace MiigaikVkBot.Utils
             if (loadingDay.Timetable.Count == 0)
                 return "Пар сегодня нет. Совсем нет.";
 
-            WeekType weekType = shedule.IsLower(DateTime.Now) ? WeekType.Lower : WeekType.Upper;
+            WeekType weekType = shedule.IsLower(DateTimeProvider.Now) ? WeekType.Lower : WeekType.Upper;
             Subject subject = loadingDay.Timetable.SingleOrDefault(x => x.SubjectNumber == currSubj.Item1 && x.WeekType == weekType);
 
             if (subject == null)

@@ -51,6 +51,7 @@ namespace MiigaikVkBot.Responsers
                 URL = GIDZ_IPD_SHEDULE_URL
             };
             IpdShedule.UpdateTimetable();
+            LastUpdateTime = DateTimeProvider.Now;
 
             keyboardBuilder.AddButton("Сегодня", "", VkNet.Enums.SafetyEnums.KeyboardButtonColor.Primary);
             keyboardBuilder.AddButton("Завтра", "", VkNet.Enums.SafetyEnums.KeyboardButtonColor.Primary);
@@ -82,8 +83,11 @@ namespace MiigaikVkBot.Responsers
 
         public override MessagesSendParams ConstructResponse(Message message)
         {
-            if (DateTime.Now - LastUpdateTime > TimeSpan.FromHours(1))
+            if (DateTimeProvider.Now - LastUpdateTime > TimeSpan.FromHours(1))
+            {
                 IpdShedule.UpdateTimetable();
+                LastUpdateTime = DateTimeProvider.Now;
+            }
 
             string response = "";
             string msg = message.Body.ToLower();
@@ -184,8 +188,8 @@ namespace MiigaikVkBot.Responsers
             switch (msg)
             {
                 case "сегодня":
-                    if (DateTime.Now.DayOfWeek != DayOfWeek.Sunday)
-                        response = Converters.SheduleFormat.GetSheduleOn(DateTime.Now, IpdShedule, false, URLs);
+                    if (DateTimeProvider.Now.DayOfWeek != DayOfWeek.Sunday)
+                        response = Converters.SheduleFormat.GetSheduleOn(DateTimeProvider.Now, IpdShedule, false, URLs);
                     else
                         return new MessagesSendParams()
                         {
@@ -196,8 +200,8 @@ namespace MiigaikVkBot.Responsers
                         };
                     break;
                 case "завтра":
-                    if (DateTime.Now.DayOfWeek != DayOfWeek.Saturday)
-                            response = Converters.SheduleFormat.GetSheduleOn(DateTime.Now.AddDays(1), IpdShedule, false, URLs);
+                    if (DateTimeProvider.Now.DayOfWeek != DayOfWeek.Saturday)
+                            response = Converters.SheduleFormat.GetSheduleOn(DateTimeProvider.Now.AddDays(1), IpdShedule, false, URLs);
                     else
                         return new MessagesSendParams()
                         {
@@ -217,7 +221,7 @@ namespace MiigaikVkBot.Responsers
                     // на неделю вперёд
                     //response = Converters.SheduleFormat.GetSheduleOn((new DateTime(2019, 9, 2)).AddDays(day == DayOfWeek.Sunday ? 6 : (int)day - 1), IpdShedule, true);
                     response = Converters.SheduleFormat.GetSheduleOn((new DateTime(2019, 9, 2)).AddDays(day == DayOfWeek.Sunday ? 6 : (int)day - 1), IpdShedule, true, URLs);
-                    //response = Converters.SheduleFormat.GetSheduleOn(DateTime.Now, IpdShedule, true);
+                    //response = Converters.SheduleFormat.GetSheduleOn(DateTimeProvider.Now, IpdShedule, true);
                     break;
                 case "воскресенье":
                     return new MessagesSendParams()
