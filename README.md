@@ -1,5 +1,7 @@
 # MiigaikVkBot
 
+[![ci](https://github.com/Flexlug/MiigaikVkBot/actions/workflows/publish.yml/badge.svg)](https://github.com/Flexlug/MiigaikVkBot/actions/workflows/publish.yml)
+
 Бот, предназначенный для автоматического получения расписания с университетского сайта https://study.miigaik.ru/.
 
 ## Требования
@@ -11,7 +13,7 @@
 
 Для запуска требуется Docker.
 
-## Запуск
+## Сборка исходников и запуск
 
 1. Клонируем репозиторий
 ```bash
@@ -26,7 +28,6 @@ version: '3.8'
 
 services:
   miigaikvkbot:
-    image: flexlug/miigaikvkbot:latest
     build:
       context: .
     restart: unless-stopped
