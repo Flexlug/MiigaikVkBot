@@ -17,7 +17,7 @@ namespace MiigaikVkBot.Responser
         /// <summary>
         /// Ссылка на страницу с расписанием
         /// </summary>
-        private const string GroupUrl = "groups?faculty=ФГиИБ&course=2&group-name=2022-ФГиИБ-ПИ-1м";
+        private string GroupUrl { get; init; }
 
         /// <summary>
         /// Расписание группы
@@ -39,8 +39,10 @@ namespace MiigaikVkBot.Responser
         /// </summary>
         private readonly ConcurrentDictionary<string, string> _urLs = new();
 
-        public Reponser(long _groupId, VkApi _vkApi, bool reverseWeek) : base(_groupId, _vkApi)
+        public Reponser(string group_url, long _groupId, VkApi _vkApi, bool reverseWeek) : base(_groupId, _vkApi)
         {
+            GroupUrl = group_url;
+            
             _shedule = new Shedule(GroupUrl);
             _shedule.UpdateTimetable();
             _lastUpdateTime = DateTimeProvider.Now;

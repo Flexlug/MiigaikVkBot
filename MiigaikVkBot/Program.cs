@@ -19,9 +19,10 @@ namespace MiigaikVkBot
         {
             Console.WriteLine($"StudBot v.{VersionInfo.Ver}");
 
-            _baseResponser = new Reponser(215791351, api, true);
+            string token = Environment.GetEnvironmentVariable("VK_TOKEN");
+            string group_url = Environment.GetEnvironmentVariable("GROUP_URL");
 
-            string token = System.Environment.GetEnvironmentVariable("VK_TOKEN");
+            _baseResponser = new Reponser(group_url, 215791351, api, true);
 
             ApiAuthParams authParams = new ApiAuthParams()
             {
