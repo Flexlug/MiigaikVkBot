@@ -5,7 +5,8 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["MiigaikVkBot/MiigaikVkBot.csproj", "MiigaikVkBot/"]
+COPY ["/src/MiigaikVkBot/MiigaikVkBot.csproj", "MiigaikVkBot/"]
+COPY ["/src/MiigaikVkBot/MiigaikVkBot.Timetable.csproj", "MiigaikVkBot.Timetable/"]
 RUN dotnet restore "MiigaikVkBot/MiigaikVkBot.csproj"
 COPY . .
 WORKDIR "/src/MiigaikVkBot"

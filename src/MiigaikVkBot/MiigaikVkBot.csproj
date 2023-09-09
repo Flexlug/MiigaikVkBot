@@ -13,4 +13,12 @@
   <ItemGroup>
     <ProjectReference Include="..\MiigaikVkBot.Timetable\MiigaikVkBot.Timetable.csproj" />
   </ItemGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>$(SolutionDir)/build/Debug</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>$(SolutionDir)/build/Release</OutputPath>
+  </PropertyGroup>
 </Project>

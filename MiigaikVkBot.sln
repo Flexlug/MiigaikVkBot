@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiigaikVkBot", "MiigaikVkBot\MiigaikVkBot.csproj", "{4CA1C021-679D-480F-B19B-DEC92FE12861}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiigaikVkBot", "src\MiigaikVkBot\MiigaikVkBot.csproj", "{4CA1C021-679D-480F-B19B-DEC92FE12861}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiigaikVkBot.Timetable", "MiigaikVkBot.Timetable\MiigaikVkBot.Timetable.csproj", "{6671F28A-FC71-4D2E-BF6D-D63C812B42C7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiigaikVkBot.Timetable", "src\MiigaikVkBot.Timetable\MiigaikVkBot.Timetable.csproj", "{6671F28A-FC71-4D2E-BF6D-D63C812B42C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -5,5 +5,6 @@ services:
   miigaikvkbot:
     image: flexlug/miigaikvkbot:latest
     restart: unless-stopped
-    volumes:
-      - /var/docker_data/miigaikvkbot-config:/app/data
+    environment:
+      "VK_TOKEN": "PASTE_YOU_TOKEN_HERE"
+      "GROUP_URL": "PASTE_YOUR_GROUP_URL_HERE"
