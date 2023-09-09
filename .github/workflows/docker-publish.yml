@@ -9,7 +9,6 @@ on:
     branches: ["**"]
 
 env:
-  # Use docker.io for Docker Hub if empty
   REGISTRY: docker.io
   IMAGE_NAME: ${{ github.repository }}
   SHA: ${{ github.event.pull_request.head.sha || github.event.after }}
