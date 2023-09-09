@@ -2,8 +2,6 @@
 
 Бот, предназначенный для автоматического получения расписания с университетского сайта http://studydep.miigaik.ru/.
 
-![demo](https://github.com/Flexlug/MiigaikVkBot/raw/master/docs/demo.png)
-
 ## Требования
 
 Необходимо получить следующие вещи:
@@ -22,9 +20,25 @@ cd MiigaikVkBot
 ```
 
 2. Редактируем `docker-compose.yml`, где указываем ключ доступа, ID группы и URL группы
+
+```yml
+version: '3.8'
+
+services:
+  miigaikvkbot:
+    image: flexlug/miigaikvkbot:latest
+    restart: unless-stopped
+    environment:
+      "VK_TOKEN": "PASTE_YOUR_TOKEN_HERE"
+      "VK_GROUP_ID": PASTE_YOUR_GROUP_ID_HERE_IN_ULONG_FORMAT
+      "GROUP_URL": "PASTE_YOUR_GROUP_URL_HERE"
+```
+
 3. Запускаем бота
 ```bash
 docker compose up -d
 ```
 
 Если все было сделано правильно - бот заработает. Получить к нему доступ можно через ЛС группы.
+
+![demo](https://github.com/Flexlug/MiigaikVkBot/raw/master/docs/demo.png)
