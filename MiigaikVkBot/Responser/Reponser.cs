@@ -1,76 +1,68 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-
-using TimetableGetter;
-
 using MiigaikVkBot.Converters;
+using MiigaikVkBot.Timetable;
+using MiigaikVkBot.Timetable.Implementation;
 using MiigaikVkBot.Utils;
-
 using VkNet;
 using VkNet.Model;
-using VkNet.Model.Keyboard;
-using VkNet.Model.RequestParams;
-using System.IO;
-using System.Collections.Concurrent;
 
-namespace MiigaikVkBot.Responsers
+namespace MiigaikVkBot.Responser
 {
-    public class ResponserIPD : Responser
+    public class Reponser : BaseResponser
     {
         /// <summary>
         /// Ссылка на страницу с расписанием
         /// </summary>
-        public readonly string GIDZ_IPD_SHEDULE_URL = "http://studydep.miigaik.ru/index.php?fak=ФГиИБ&kurs=1&grup=2022-ФГиИБ-ПИабпд-1м";
+        private const string GroupUrl = "groups?faculty=ФГиИБ&course=2&group-name=2022-ФГиИБ-ПИ-1м";
 
         /// <summary>
         /// Расписание группы
         /// </summary>
-        public Shedule IpdShedule;
+        private BaseShedule _shedule;
 
         /// <summary>
         /// Дата последнего обновления
         /// </summary>
-        private DateTime LastUpdateTime;
+        private DateTime _lastUpdateTime;
 
         /// <summary>
         /// Конструктор клавиатуры
         /// </summary>
-        public KeyboardBuilder keyboardBuilder = new KeyboardBuilder(false);
+        private readonly KeyboardBuilder _keyboardBuilder = new KeyboardBuilder(false);
 
         /// <summary>
         /// Словарь с ссылками на пары
         /// </summary>
-        public ConcurrentDictionary<string, string> URLs = new ConcurrentDictionary<string, string>();
+        private readonly ConcurrentDictionary<string, string> _urLs = new();
 
-        public ResponserIPD(long _groupId, VkApi _vkApi, bool reverseWeek) : base(_groupId, _vkApi)
+        public Reponser(long _groupId, VkApi _vkApi, bool reverseWeek) : base(_groupId, _vkApi)
         {
-            IpdShedule = new Shedule(reverseWeek)
-            {
-                URL = GIDZ_IPD_SHEDULE_URL
-            };
-            IpdShedule.UpdateTimetable();
-            LastUpdateTime = DateTimeProvider.Now;
+            _shedule = new Shedule(GroupUrl);
+            _shedule.UpdateTimetable();
+            _lastUpdateTime = DateTimeProvider.Now;
 
-            keyboardBuilder.AddButton("Сегодня", "", VkNet.Enums.SafetyEnums.KeyboardButtonColor.Primary);
-            keyboardBuilder.AddButton("Завтра", "", VkNet.Enums.SafetyEnums.KeyboardButtonColor.Primary);
-            keyboardBuilder.AddLine();
-            keyboardBuilder.AddButton("Сейчас", "", VkNet.Enums.SafetyEnums.KeyboardButtonColor.Negative);
-            keyboardBuilder.AddLine();
-            keyboardBuilder.AddButton("Понедельник", "", VkNet.Enums.SafetyEnums.KeyboardButtonColor.Default);
-            keyboardBuilder.AddButton("Вторник", "", VkNet.Enums.SafetyEnums.KeyboardButtonColor.Default);
-            keyboardBuilder.AddButton("Среда", "", VkNet.Enums.SafetyEnums.KeyboardButtonColor.Default);
-            keyboardBuilder.AddLine();
-            keyboardBuilder.AddButton("Четверг", "", VkNet.Enums.SafetyEnums.KeyboardButtonColor.Default);
-            keyboardBuilder.AddButton("Пятница", "", VkNet.Enums.SafetyEnums.KeyboardButtonColor.Default);
-            keyboardBuilder.AddButton("Суббота", "", VkNet.Enums.SafetyEnums.KeyboardButtonColor.Default);
+            _keyboardBuilder.AddButton("Сегодня", "", VkNet.Enums.StringEnums.KeyboardButtonColor.Primary);
+            _keyboardBuilder.AddButton("Завтра", "", VkNet.Enums.StringEnums.KeyboardButtonColor.Primary);
+            _keyboardBuilder.AddLine();
+            _keyboardBuilder.AddButton("Сейчас", "", VkNet.Enums.StringEnums.KeyboardButtonColor.Negative);
+            _keyboardBuilder.AddLine();
+            _keyboardBuilder.AddButton("Понедельник", "", VkNet.Enums.StringEnums.KeyboardButtonColor.Default);
+            _keyboardBuilder.AddButton("Вторник", "", VkNet.Enums.StringEnums.KeyboardButtonColor.Default);
+            _keyboardBuilder.AddButton("Среда", "", VkNet.Enums.StringEnums.KeyboardButtonColor.Default);
+            _keyboardBuilder.AddLine();
+            _keyboardBuilder.AddButton("Четверг", "", VkNet.Enums.StringEnums.KeyboardButtonColor.Default);
+            _keyboardBuilder.AddButton("Пятница", "", VkNet.Enums.StringEnums.KeyboardButtonColor.Default);
+            _keyboardBuilder.AddButton("Суббота", "", VkNet.Enums.StringEnums.KeyboardButtonColor.Default);
 
             if (File.Exists("urls.json"))
             {
                 try
                 {
-                    URLs = Newtonsoft.Json.JsonConvert.DeserializeObject<ConcurrentDictionary<string, string>>(File.ReadAllText("urls.json")) ?? new();
+                    _urLs = Newtonsoft.Json.JsonConvert.DeserializeObject<ConcurrentDictionary<string, string>>(File.ReadAllText("urls.json")) ?? new();
                 }
                 catch(Exception ex)
                 {
@@ -83,10 +75,10 @@ namespace MiigaikVkBot.Responsers
 
         public override MessagesSendParams ConstructResponse(Message message)
         {
-            if (DateTimeProvider.Now - LastUpdateTime > TimeSpan.FromHours(1))
+            if (DateTimeProvider.Now - _lastUpdateTime > TimeSpan.FromHours(1))
             {
-                IpdShedule.UpdateTimetable();
-                LastUpdateTime = DateTimeProvider.Now;
+                _shedule.UpdateTimetable();
+                _lastUpdateTime = DateTimeProvider.Now;
             }
 
             string response = "";
@@ -104,7 +96,7 @@ namespace MiigaikVkBot.Responsers
                     Message = "OK",
                     RandomId = new DateTime().Millisecond,
                     UserId = message.UserId,
-                    Keyboard = keyboardBuilder.Build()
+                    Keyboard = _keyboardBuilder.Build()
                 };
             }
 
@@ -116,7 +108,7 @@ namespace MiigaikVkBot.Responsers
                     Message = "OK",
                     RandomId = new DateTime().Millisecond,
                     UserId = message.UserId,
-                    Keyboard = keyboardBuilder.Build()
+                    Keyboard = _keyboardBuilder.Build()
                 };
             }    
 
@@ -129,15 +121,15 @@ namespace MiigaikVkBot.Responsers
                     string subjName = strings[1].ToLower();
                     subjName = string.Join( " ", subjName.Split( new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries ));
 
-                    URLs.AddOrUpdate(subjName, strings[2], (key, value) => strings[2]);
+                    _urLs.AddOrUpdate(subjName, strings[2], (key, value) => strings[2]);
 
-                    File.WriteAllText("urls.json", Newtonsoft.Json.JsonConvert.SerializeObject(URLs));
+                    File.WriteAllText("urls.json", Newtonsoft.Json.JsonConvert.SerializeObject(_urLs));
                     return new MessagesSendParams()
                     {
                         Message = "Успешно",
                         RandomId = new DateTime().Millisecond,
                         UserId = message.UserId,
-                        Keyboard = keyboardBuilder.Build()
+                        Keyboard = _keyboardBuilder.Build()
                     };
                 }
                 else
@@ -147,7 +139,7 @@ namespace MiigaikVkBot.Responsers
                         Message = "Неверный формат",
                         RandomId = new DateTime().Millisecond,
                         UserId = message.UserId,
-                        Keyboard = keyboardBuilder.Build()
+                        Keyboard = _keyboardBuilder.Build()
                     };
                 }
             }
@@ -162,15 +154,15 @@ namespace MiigaikVkBot.Responsers
                     string subjName = strings[1].ToLower();
                     subjName = string.Join( " ", subjName.Split( new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries ));
                     
-                    if (URLs.TryGetValue(subjName, out value))
-                        URLs.Remove(subjName, out _);
+                    if (_urLs.TryGetValue(subjName, out value))
+                        _urLs.Remove(subjName, out _);
 
                     return new MessagesSendParams()
                     {
                         Message = "Успешно",
                         RandomId = new DateTime().Millisecond,
                         UserId = message.UserId,
-                        Keyboard = keyboardBuilder.Build()
+                        Keyboard = _keyboardBuilder.Build()
                     };
                 }
                 else
@@ -180,7 +172,7 @@ namespace MiigaikVkBot.Responsers
                         Message = "Неверный формат",
                         RandomId = new DateTime().Millisecond,
                         UserId = message.UserId,
-                        Keyboard = keyboardBuilder.Build()
+                        Keyboard = _keyboardBuilder.Build()
                     };
                 }
             }
@@ -189,26 +181,26 @@ namespace MiigaikVkBot.Responsers
             {
                 case "сегодня":
                     if (DateTimeProvider.Now.DayOfWeek != DayOfWeek.Sunday)
-                        response = Converters.SheduleFormat.GetSheduleOn(DateTimeProvider.Now, IpdShedule, false, URLs);
+                        response = SheduleFormat.GetSheduleOn(DateTimeProvider.Now, _shedule, false, _urLs);
                     else
                         return new MessagesSendParams()
                         {
                             Message = "ВОСКРЕСЕНЬЕ:\n\nВыходной день. Пар не должно быть.",
                             RandomId = new DateTime().Millisecond,
                             UserId = message.UserId,
-                            Keyboard = keyboardBuilder.Build()
+                            Keyboard = _keyboardBuilder.Build()
                         };
                     break;
                 case "завтра":
                     if (DateTimeProvider.Now.DayOfWeek != DayOfWeek.Saturday)
-                            response = Converters.SheduleFormat.GetSheduleOn(DateTimeProvider.Now.AddDays(1), IpdShedule, false, URLs);
+                            response = SheduleFormat.GetSheduleOn(DateTimeProvider.Now.AddDays(1), _shedule, false, _urLs);
                     else
                         return new MessagesSendParams()
                         {
                             Message = "ВОСКРЕСЕНЬЕ:\n\nВыходной день. Пар не должно быть.",
                             RandomId = new DateTime().Millisecond,
                             UserId = message.UserId,
-                            Keyboard = keyboardBuilder.Build()
+                            Keyboard = _keyboardBuilder.Build()
                         };
                     break;
                 case "понедельник":
@@ -220,7 +212,7 @@ namespace MiigaikVkBot.Responsers
                     DayOfWeek day = Converters.DayOfWeekConverter.FromStrToDOW(message.Body);
                     // на неделю вперёд
                     //response = Converters.SheduleFormat.GetSheduleOn((new DateTime(2019, 9, 2)).AddDays(day == DayOfWeek.Sunday ? 6 : (int)day - 1), IpdShedule, true);
-                    response = Converters.SheduleFormat.GetSheduleOn((new DateTime(2019, 9, 2)).AddDays(day == DayOfWeek.Sunday ? 6 : (int)day - 1), IpdShedule, true, URLs);
+                    response = Converters.SheduleFormat.GetSheduleOn((new DateTime(2019, 9, 2)).AddDays(day == DayOfWeek.Sunday ? 6 : (int)day - 1), _shedule, true, _urLs);
                     //response = Converters.SheduleFormat.GetSheduleOn(DateTimeProvider.Now, IpdShedule, true);
                     break;
                 case "воскресенье":
@@ -229,7 +221,7 @@ namespace MiigaikVkBot.Responsers
                         Message = "ВОСКРЕСЕНЬЕ:\n\nВыходной день. Пар не должно быть.",
                         RandomId = new DateTime().Millisecond,
                         UserId = message.UserId,
-                        Keyboard = keyboardBuilder.Build()
+                        Keyboard = _keyboardBuilder.Build()
                     };
                 case "начать":
                 case "помощь":
@@ -238,16 +230,16 @@ namespace MiigaikVkBot.Responsers
                         Message = $"{Emoji.RedCircle()} SheduleBOT v{VersionInfo.Ver} {Emoji.RedCircle()}\n\nПоследние изменения:\n{VersionInfo.LastUpdates}\nОбо всех найденных ошибках сообщать: http://vk.com/flexlug \n Для того, чтобы увидеть расписание, введите соответствующий день недели.\nТакже можно вывести расписание на сегодняшний или завтрашний день. Вводите \"сегодня\" или \"завтра\" соответственно.",
                         RandomId = new DateTime().Millisecond,
                         UserId = message.UserId,
-                        Keyboard = keyboardBuilder.Build()
+                        Keyboard = _keyboardBuilder.Build()
                     };
                 case "обновить расписание":
-                    IpdShedule.UpdateTimetable();
+                    _shedule.UpdateTimetable();
                     return new MessagesSendParams()
                     {
                         Message = "Расписание успешно обновлено!",
                         RandomId = new DateTime().Millisecond,
                         UserId = message.UserId,
-                        Keyboard = keyboardBuilder.Build()
+                        Keyboard = _keyboardBuilder.Build()
                     };
                 case "есть ли вебинары?":
                     return new MessagesSendParams()
@@ -255,15 +247,15 @@ namespace MiigaikVkBot.Responsers
                         Message = "Режим СДО выключен.",
                         RandomId = new DateTime().Millisecond,
                         UserId = message.UserId,
-                        Keyboard = keyboardBuilder.Build()
+                        Keyboard = _keyboardBuilder.Build()
                     };
                 case "сейчас":
                     return new MessagesSendParams()
                     {
-                        Message = CurrentSubjectGetter.GetSubject(IpdShedule, URLs),
+                        Message = CurrentSubjectGetter.GetSubject(_shedule, _urLs),
                         RandomId = new DateTime().Millisecond,
                         UserId = message.UserId,
-                        Keyboard = keyboardBuilder.Build()
+                        Keyboard = _keyboardBuilder.Build()
                     };
                 default:
                     return new MessagesSendParams()
@@ -271,7 +263,7 @@ namespace MiigaikVkBot.Responsers
                         Message = InvMsgReactProv.ProcMsg(msg),
                         RandomId = new DateTime().Millisecond,
                         UserId = message.UserId,
-                        Keyboard = keyboardBuilder.Build()
+                        Keyboard = _keyboardBuilder.Build()
                     };
             }
 
@@ -280,7 +272,7 @@ namespace MiigaikVkBot.Responsers
                 Message = response,
                 RandomId = new DateTime().Millisecond,
                 UserId = message.UserId,
-                Keyboard = keyboardBuilder.Build()
+                Keyboard = _keyboardBuilder.Build()
             };
         }
     }

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using TimetableGetter;
-
 using MiigaikVkBot.Converters;
 using System.Collections.Concurrent;
+using MiigaikVkBot.Timetable;
+using MiigaikVkBot.Timetable.Implementation;
+using MiigaikVkBot.Timetable.Models;
 
 namespace MiigaikVkBot.Converters
 {
@@ -18,6 +18,7 @@ namespace MiigaikVkBot.Converters
         /// </summary>
         private static Dictionary<int, string> LessonsStartTime = new Dictionary<int, string>()
         {
+            { 0, "--:--"},
             { 1, "9:00" },
             { 2, "10:40" },
             { 3, "12:50" },
@@ -32,17 +33,17 @@ namespace MiigaikVkBot.Converters
         /// Возвращает расписание на определённый день недели
         /// </summary>
         /// <param name="day">День, на который нужно получить расписание</param>
-        /// <param name="shedule">Само расписание</param>
+        /// <param name="legacyShedule">Само расписание</param>
         /// <param name="bothWeeeks">Расписание на обе недели (верхней и нижней) или только на текущей</param>
         /// <returns></returns>
-        public static string GetSheduleOn(DateTime day, Shedule shedule, bool bothWeeks, ConcurrentDictionary<string, string> urls = null)
+        public static string GetSheduleOn(DateTime day, BaseShedule legacyShedule, bool bothWeeks, ConcurrentDictionary<string, string> urls = null)
         {
             StringBuilder lower = new StringBuilder();
             StringBuilder upper = new StringBuilder();
             StringBuilder final = new StringBuilder();
 
             final.AppendLine($"{Converters.DayOfWeekConverter.FromDOWToStr(day.DayOfWeek).ToUpper()}:\n");
-            if (shedule.IsLower(day))
+            if (legacyShedule.IsLower(day))
             {
                 lower.AppendLine("НИЖНЯЯ НЕДЕЛЯ:");
                 upper.AppendLine("Верхняя неделя:");
@@ -58,27 +59,27 @@ namespace MiigaikVkBot.Converters
             switch (day.DayOfWeek)
             {
                 case DayOfWeek.Monday:
-                    loadingDay = shedule.Monday;
+                    loadingDay = legacyShedule.Monday;
                     break;
 
                 case DayOfWeek.Tuesday:
-                    loadingDay = shedule.Tuesday;
+                    loadingDay = legacyShedule.Tuesday;
                     break;
 
                 case DayOfWeek.Wednesday:
-                    loadingDay = shedule.Wednesday;
+                    loadingDay = legacyShedule.Wednesday;
                     break;
 
                 case DayOfWeek.Thursday:
-                    loadingDay = shedule.Thursday;
+                    loadingDay = legacyShedule.Thursday;
                     break;
 
                 case DayOfWeek.Friday:
-                    loadingDay = shedule.Friday;
+                    loadingDay = legacyShedule.Friday;
                     break;
 
                 case DayOfWeek.Saturday:
-                    loadingDay = shedule.Saturday;
+                    loadingDay = legacyShedule.Saturday;
                     break;
             }
 
@@ -114,7 +115,7 @@ namespace MiigaikVkBot.Converters
 
             if (!bothWeeks)
             {
-                if (shedule.IsLower(day))
+                if (legacyShedule.IsLower(day))
                     final.Append(lower);
                 else
                     final.Append(upper);
@@ -149,17 +150,17 @@ namespace MiigaikVkBot.Converters
         /// Выдает расписание вебинаров. Наличие вебинара определяет по наличию ссылки в примечаниях
         /// </summary>
         /// <param name="day">День, на который надо получить расписание вебинаров</param>
-        /// <param name="shedule">Ссылка на объектс загруженным расписанием</param>
+        /// <param name="legacyShedule">Ссылка на объектс загруженным расписанием</param>
         /// <param name="bothWeeks">Вернуть расписание на обе недели</param>
         /// <returns></returns>
-        public static string GetWebinarsOn(DateTime day, Shedule shedule, bool bothWeeks)
+        public static string GetWebinarsOn(DateTime day, LegacyShedule legacyShedule, bool bothWeeks)
         {
             StringBuilder lower = new StringBuilder();
             StringBuilder upper = new StringBuilder();
             StringBuilder final = new StringBuilder();
 
             final.AppendLine($"{Converters.DayOfWeekConverter.FromDOWToStr(day.DayOfWeek).ToUpper()}:\n");
-            if (shedule.IsLower(day))
+            if (legacyShedule.IsLower(day))
             {
                 lower.AppendLine("НИЖНЯЯ НЕДЕЛЯ:");
                 upper.AppendLine("Верхняя неделя:");
@@ -175,27 +176,27 @@ namespace MiigaikVkBot.Converters
             switch (day.DayOfWeek)
             {
                 case DayOfWeek.Monday:
-                    loadingDay = shedule.Monday;
+                    loadingDay = legacyShedule.Monday;
                     break;
 
                 case DayOfWeek.Tuesday:
-                    loadingDay = shedule.Tuesday;
+                    loadingDay = legacyShedule.Tuesday;
                     break;
 
                 case DayOfWeek.Wednesday:
-                    loadingDay = shedule.Wednesday;
+                    loadingDay = legacyShedule.Wednesday;
                     break;
 
                 case DayOfWeek.Thursday:
-                    loadingDay = shedule.Thursday;
+                    loadingDay = legacyShedule.Thursday;
                     break;
 
                 case DayOfWeek.Friday:
-                    loadingDay = shedule.Friday;
+                    loadingDay = legacyShedule.Friday;
                     break;
 
                 case DayOfWeek.Saturday:
-                    loadingDay = shedule.Saturday;
+                    loadingDay = legacyShedule.Saturday;
                     break;
             }
 
@@ -225,7 +226,7 @@ namespace MiigaikVkBot.Converters
 
             if (!bothWeeks)
             {
-                if (shedule.IsLower(day))
+                if (legacyShedule.IsLower(day))
                     final.Append(lower);
                 else
                     final.Append(upper);

@@ -1,29 +1,27 @@
-﻿using System;
-
-using MiigaikVkBot.Responsers;
+﻿
+using System;
+using MiigaikVkBot.Responser;
 using MiigaikVkBot.Utils;
 
 using VkNet;
 using VkNet.Model;
-using VkNet.Model.RequestParams;
 using VkNet.Enums.SafetyEnums;
-using VkNet.Enums.Filters;
-using System.IO;
+using VkNet.Enums.StringEnums;
 
 namespace MiigaikVkBot
 {
     class Program
     {
         static VkApi api = new VkApi();
-        static ResponserIPD responser;
+        static Reponser _baseResponser;
 
         static void Main(string[] args)
         {
             Console.WriteLine($"StudBot v.{VersionInfo.Ver}");
 
-            responser = new ResponserIPD(215791351, api, true);
+            _baseResponser = new Reponser(215791351, api, true);
 
-            string token = File.ReadAllText("data/token.txt");
+            string token = System.Environment.GetEnvironmentVariable("VK_TOKEN");
 
             ApiAuthParams authParams = new ApiAuthParams()
             {
@@ -57,11 +55,11 @@ namespace MiigaikVkBot
 
                 foreach (var update in poll.Updates)
                 {
-                    if (update.Type == GroupUpdateType.MessageNew)
+                    if (update.Type.Value == GroupUpdateType.MessageNew)
                     {
-                        var answer = responser.ConstructResponse(update.Message);
+                        var answer = _baseResponser.ConstructResponse(update.Instance as Message);
                         if (answer is not null)
-                            api.Messages.Send(responser.ConstructResponse(update.Message));
+                            api.Messages.Send(_baseResponser.ConstructResponse(update.Instance as Message));
                     }
                 }
             }

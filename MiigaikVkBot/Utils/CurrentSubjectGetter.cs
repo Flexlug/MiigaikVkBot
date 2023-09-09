@@ -4,8 +4,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using TimetableGetter;
+using MiigaikVkBot.Timetable;
+using MiigaikVkBot.Timetable.Implementation;
+using MiigaikVkBot.Timetable.Models;
 
 namespace MiigaikVkBot.Utils
 {
@@ -59,9 +60,9 @@ namespace MiigaikVkBot.Utils
         /// <summary>
         /// Получить предмет, который будет или уже должен идти сейчас
         /// </summary>
-        /// <param name="shedule">Расписание</param>
+        /// <param name="legacyShedule">Расписание</param>
         /// <returns></returns>
-        public static string GetSubject(Shedule shedule, ConcurrentDictionary<string, string> urls = null)
+        public static string GetSubject(BaseShedule legacyShedule, ConcurrentDictionary<string, string> urls = null)
         {
             //Tuple<int, string> currSubj = GetCurrentSubjectNum(DateTimeProvider.Now.TimeOfDay);
             Tuple<int, string> currSubj = GetCurrentSubjectNum(DateTimeProvider.Now.TimeOfDay);
@@ -70,34 +71,34 @@ namespace MiigaikVkBot.Utils
             switch (DateTimeProvider.Now.DayOfWeek)
             {
                 case DayOfWeek.Monday:
-                    loadingDay = shedule.Monday;
+                    loadingDay = legacyShedule.Monday;
                     break;
 
                 case DayOfWeek.Tuesday:
-                    loadingDay = shedule.Tuesday;
+                    loadingDay = legacyShedule.Tuesday;
                     break;
 
                 case DayOfWeek.Wednesday:
-                    loadingDay = shedule.Wednesday;
+                    loadingDay = legacyShedule.Wednesday;
                     break;
 
                 case DayOfWeek.Thursday:
-                    loadingDay = shedule.Thursday;
+                    loadingDay = legacyShedule.Thursday;
                     break;
 
                 case DayOfWeek.Friday:
-                    loadingDay = shedule.Friday;
+                    loadingDay = legacyShedule.Friday;
                     break;
 
                 case DayOfWeek.Saturday:
-                    loadingDay = shedule.Saturday;
+                    loadingDay = legacyShedule.Saturday;
                     break;
             }
 
             if (loadingDay.Timetable.Count == 0)
                 return "Пар сегодня нет. Совсем нет.";
 
-            WeekType weekType = shedule.IsLower(DateTimeProvider.Now) ? WeekType.Lower : WeekType.Upper;
+            WeekType weekType = legacyShedule.IsLower(DateTimeProvider.Now) ? WeekType.Lower : WeekType.Upper;
             Subject subject = loadingDay.Timetable.SingleOrDefault(x => x.SubjectNumber == currSubj.Item1 && x.WeekType == weekType);
 
             if (subject == null)

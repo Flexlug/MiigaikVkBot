@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 using VkNet;
 using VkNet.Model;
-using VkNet.Model.RequestParams;
 
-namespace MiigaikVkBot.Responsers
+namespace MiigaikVkBot.Responser
 {
-    public class Responser
+    public class BaseResponser
     {
         public long GroupID;
         public VkApi VkController;
 
-        public Responser(long _groupId, VkApi _vkController)
+        public BaseResponser(long _groupId, VkApi _vkController)
         {
             VkController = _vkController;
             GroupID = _groupId;

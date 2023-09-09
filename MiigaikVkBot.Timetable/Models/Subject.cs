@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TimetableGetter
+﻿namespace MiigaikVkBot.Timetable.Models
 {
     /// <summary>
     /// Тип недели

@@ -1,50 +1,15 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using System.Linq;
-using System.Collections.Generic;
-
+﻿using System.Text;
 using HtmlAgilityPack;
-using RestSharp;
+using MiigaikVkBot.Timetable.Models;
 
-namespace TimetableGetter
+namespace MiigaikVkBot.Timetable.Implementation
 {
-    public class Shedule
+    public class LegacyShedule : BaseShedule
     {
         /// <summary>
-        /// Расписание на понедельник
+        /// Ревёрс недели.
         /// </summary>
-        public Day Monday;
-
-        /// <summary>
-        /// Расписание на вторник
-        /// </summary>
-        public Day Tuesday;
-
-        /// <summary>
-        /// Расписание на среду
-        /// </summary>
-        public Day Wednesday;
-
-        /// <summary>
-        /// Расписание на четверг
-        /// </summary>
-        public Day Thursday;
-
-        /// <summary>
-        /// Расписание на пятницу
-        /// </summary>
-        public Day Friday;
-
-        /// <summary>
-        /// Расписание на субботу
-        /// </summary>
-        public Day Saturday;
-
-        /// <summary>
-        /// Расписание на воскресенье
-        /// </summary>
-        public Day Sunday;
+        private bool _reverseWeek = false;
 
         /// <summary>
         /// Ссылка на страницу, откуда будет грузиться расписание
@@ -59,16 +24,13 @@ namespace TimetableGetter
         /// <summary>
         /// Инициализирует экземпляр Shedule и все поля внутри
         /// </summary>
-        public Shedule(bool reverseWeek)
+        public LegacyShedule(bool reverseWeek)
         {
             _reverseWeek = reverseWeek;
-            Empty();
+            Clear();
         }
 
-        /// <summary>
-        /// Очистить расписание
-        /// </summary>
-        public void Empty()
+        public override void Clear()
         {
             Monday = new Day();
             Monday.Timetable.Add(new Subject()
@@ -114,33 +76,15 @@ namespace TimetableGetter
         }
 
         /// <summary>
-        /// Ревёрс недели.
-        /// </summary>
-        private bool _reverseWeek = false;
-
-        /// <summary>
         /// Вычисляет тип недели - верхняя или нижняя
         /// </summary>
-        public bool IsLower(DateTime inp)
+        public override bool IsLower(DateTime inp)
         {
             bool res = ((int)(inp - new DateTime(2019, 9, 1)).TotalDays + 13) / 7 % 2 == 0;
-            if (!_reverseWeek)
-                return res;
-            else
-                return !res;
+            return !_reverseWeek ? res : !res;
         }
 
-        /// <summary>
-        /// Вручную задаёт тип недели
-        /// </summary>
-        /// <param name="isLower"></param>
-        public void UpdateWeek(bool isLower) => isLowerWeek = isLower;
-
-        /// <summary>
-        /// Запускает процесс обновления расписания
-        /// </summary>
-        /// <param name="web_uri">Веб-адрес страницы с расписанием</param>
-        public void UpdateTimetable()
+        public override void UpdateTimetable()
         {
             // Решаем проблему с кодировкой. Веб-страница использует кодировку Windows-1251
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
