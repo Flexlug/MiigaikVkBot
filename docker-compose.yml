@@ -7,4 +7,5 @@ services:
     restart: unless-stopped
     environment:
       "VK_TOKEN": "PASTE_YOU_TOKEN_HERE"
+      "VK_GROUP_ID": 215791351
       "GROUP_URL": "PASTE_YOUR_GROUP_URL_HERE"

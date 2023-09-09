@@ -6,10 +6,10 @@ namespace MiigaikVkBot.Responser
 {
     public class BaseResponser
     {
-        public long GroupID;
+        public ulong GroupID;
         public VkApi VkController;
 
-        public BaseResponser(long _groupId, VkApi _vkController)
+        public BaseResponser(ulong _groupId, VkApi _vkController)
         {
             VkController = _vkController;
             GroupID = _groupId;

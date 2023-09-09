@@ -39,7 +39,7 @@ namespace MiigaikVkBot.Responser
         /// </summary>
         private readonly ConcurrentDictionary<string, string> _urLs = new();
 
-        public Reponser(string group_url, long _groupId, VkApi _vkApi, bool reverseWeek) : base(_groupId, _vkApi)
+        public Reponser(string group_url, ulong _groupId, VkApi _vkApi, bool reverseWeek) : base(_groupId, _vkApi)
         {
             GroupUrl = group_url;
             

@@ -19,10 +19,11 @@ namespace MiigaikVkBot
         {
             Console.WriteLine($"StudBot v.{VersionInfo.Ver}");
 
-            string token = Environment.GetEnvironmentVariable("VK_TOKEN");
-            string group_url = Environment.GetEnvironmentVariable("GROUP_URL");
+            var token = Environment.GetEnvironmentVariable("VK_TOKEN");
+            var group_id = ulong.Parse(Environment.GetEnvironmentVariable("VK_GROUP_ID"));
+            var group_url = Environment.GetEnvironmentVariable("GROUP_URL");
 
-            _baseResponser = new Reponser(group_url, 215791351, api, true);
+            _baseResponser = new Reponser(group_url, group_id, api, true);
 
             ApiAuthParams authParams = new ApiAuthParams()
             {
@@ -42,7 +43,7 @@ namespace MiigaikVkBot
 
             while (true)
             {
-                var s = api.Groups.GetLongPollServer(215791351);
+                var s = api.Groups.GetLongPollServer(group_id);
 
                 var poll = api.Groups.GetBotsLongPollHistory(new BotsLongPollHistoryParams()
                                                              { 
