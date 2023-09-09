@@ -27,6 +27,8 @@ version: '3.8'
 services:
   miigaikvkbot:
     image: flexlug/miigaikvkbot:latest
+    build:
+      context: .
     restart: unless-stopped
     environment:
       "VK_TOKEN": "PASTE_YOUR_TOKEN_HERE"
